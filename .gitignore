@@ -71,5 +71,8 @@ CMakeUserPresets.json
 *_LOCAL_*.txt
 *_REMOTE_*.txt
 
+### Output ###
+*.csv
+
 # End of https://www.toptal.com/developers/gitignore/api/git,c++,cmake
 
