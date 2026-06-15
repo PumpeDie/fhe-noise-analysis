@@ -1,31 +1,32 @@
 cmake_minimum_required(VERSION 3.14)
-project(fhe-noise-analysis VERSION 1.0 LANGUAGES CXX)
+project(ProjetFHE_FiltreImage)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Required for LSP autocompletion
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(SEAL_USE_ZLIB OFF CACHE BOOL "Disable ZLIB" FORCE)
+set(SEAL_USE_ZSTD OFF CACHE BOOL "Disable ZSTD" FORCE)
+set(SEAL_USE_MSGSL OFF CACHE BOOL "Disable MSGSL" FORCE)
 
-# ---- DEPENDENCY ISOLATION ----
 include(FetchContent)
+
+# Dépendance : Microsoft SEAL
 FetchContent_Declare(
     SEAL
     GIT_REPOSITORY https://github.com/microsoft/SEAL.git
     GIT_TAG        v4.3.2
 )
-
-# Disable unnecessary SEAL options to speed up compilation
-set(SEAL_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
-set(SEAL_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
-set(SEAL_USE_ZLIB OFF CACHE BOOL "Use ZLIB" FORCE)
-set(SEAL_USE_ZSTD OFF CACHE BOOL "Use ZSTD" FORCE)
-
 FetchContent_MakeAvailable(SEAL)
-# ------------------------------------
 
-# Executable
-add_executable(fhe-noise-analysis src/main.cpp)
+# Dépendance : stb
+FetchContent_Declare(
+    stb
+    GIT_REPOSITORY https://github.com/nothings/stb.git
+    GIT_TAG        master
+)
+FetchContent_MakeAvailable(stb)
 
-# Link against the local SEAL target
-target_link_libraries(fhe-noise-analysis PRIVATE SEAL::seal)
+add_executable(main src/main.cpp src/stb_impl.cpp)
+
+target_link_libraries(main PRIVATE SEAL::seal)
+target_include_directories(main PRIVATE ${stb_SOURCE_DIR})
