@@ -1,3 +1,7 @@
+static/out_*
+static/srv_*
+
+
 # Created by https://www.toptal.com/developers/gitignore/api/git,c++,cmake
 # Edit at https://www.toptal.com/developers/gitignore?templates=git,c++,cmake
 

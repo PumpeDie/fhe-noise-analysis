@@ -19,7 +19,7 @@ HTML_TEMPLATE = """
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Démonstration FHE - Masquage Spatial</title>
+    <title>Démonstration FHE</title>
     <style>
         body { font-family: system-ui, sans-serif; margin: 0; background: #eceff1; color: #333; }
         .container { display: flex; width: 100vw; min-height: 100vh; }
@@ -29,7 +29,7 @@ HTML_TEMPLATE = """
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .img-container { display: flex; gap: 20px; align-items: flex-start; justify-content: center; }
         .img-box { text-align: center; }
-        img { max-width: 150px; image-rendering: pixelated; border: 1px solid #aaa; background: #fff; }
+        img { max-width: 100%; image-rendering: pixelated; border: 1px solid #aaa; background: #fff; }
         .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         button { grid-column: span 2; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
         button:hover { background: #0056b3; }
@@ -47,14 +47,14 @@ HTML_TEMPLATE = """
                 <h3>Paramètres d'opération</h3>
                 <div class="controls">
                     <div>
-                        <label>Filtre (Addition) : <span id="val_b">0</span></label><br>
+                        <label>Luminosité (Addition) : <span id="val_b">0</span></label><br>
                         <input type="range" id="brightness" min="-100" max="100" value="0" oninput="document.getElementById('val_b').innerText = this.value" style="width:100%">
-                        <small>Ne consomme pas de bruit.</small>
+                        <small>Consommation de bruit nulle.</small>
                     </div>
                     <div>
-                        <label>Masquage (Multiplication) : <span id="val_i">0</span> itérations</label><br>
-                        <input type="range" id="mask_iters" min="0" max="6" value="0" oninput="document.getElementById('val_i').innerText = this.value" style="width:100%">
-                        <small>Multiplication par masque chiffré. Consomme ~30 bits/itération.</small>
+                        <label>Degré Gamma (Multiplication) : <span id="val_c">1</span></label><br>
+                        <input type="range" id="gamma_degree" min="1" max="5" value="1" oninput="document.getElementById('val_c').innerText = this.value" style="width:100%">
+                        <small>1 = Neutre (x¹). Valeurs > 1 accumulent du bruit (x², x³).</small>
                     </div>
                     <button onclick="applyFilter()">Exécuter</button>
                 </div>
@@ -63,14 +63,14 @@ HTML_TEMPLATE = """
             <div class="card img-container">
                 <div class="img-box">
                     <h3>Source</h3>
-                    <img src="/static/input.jpg" alt="Source">
+                    <img src="/static/input.png" alt="Source">
                     <div class="metric">
                         Hash: <strong id="hash_src">-</strong>
                     </div>
                 </div>
                 <div class="img-box">
                     <h3>Résultat Déchiffré</h3>
-                    <img id="resultImage" src="/static/input.jpg" alt="Résultat">
+                    <img id="resultImage" src="" alt="En attente...">
                     <div class="metric">
                         Hash: <strong id="hash_final">-</strong><br>
                         Écart d'erreur: <strong id="ecart" style="color:red">-</strong>
@@ -85,7 +85,7 @@ HTML_TEMPLATE = """
             <div class="card img-container">
                 <div class="img-box">
                     <h3>Données manipulées</h3>
-                    <img id="serverImage" src="/static/input.jpg" style="filter: blur(4px) grayscale(100%); opacity: 0.5;">
+                    <img id="serverImage" src="" alt="En attente...">
                     <div class="metric">
                         Taille en mémoire: <strong id="cipher_size">-</strong> octets
                     </div>
@@ -94,7 +94,6 @@ HTML_TEMPLATE = """
 
             <div class="card">
                 <h3>État du texte chiffré</h3>
-                <p>Budget de bruit initial : <strong>146 bits</strong></p>
                 <p>Budget de bruit restant : <strong id="budget">-</strong> bits</p>
             </div>
         </div>
@@ -104,12 +103,12 @@ HTML_TEMPLATE = """
     <script>
         function applyFilter() {
             let b = document.getElementById('brightness').value;
-            let n = document.getElementById('mask_iters').value;
+            let c = document.getElementById('gamma_degree').value;
             
             fetch('/process', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({brightness: b, mask_iters: n})
+                body: JSON.stringify({brightness: b, gamma_degree: c})
             })
             .then(r => r.json())
             .then(data => {
@@ -117,7 +116,6 @@ HTML_TEMPLATE = """
                 
                 document.getElementById('resultImage').src = '/' + data.out_img;
                 document.getElementById('serverImage').src = '/' + data.srv_img;
-                document.getElementById('serverImage').style = ""; 
                 
                 document.getElementById('cipher_size').innerText = data.taille_octets;
                 document.getElementById('budget').innerText = data.budget_final;
@@ -140,7 +138,7 @@ def index():
 def process():
     data = request.json
     brightness = data.get('brightness', 0)
-    mask_iters = data.get('mask_iters', 0)
+    gamma_degree = data.get('gamma_degree', 1)
     
     ts = int(time.time() * 1000)
     out_file = f"static/out_{ts}.png"
@@ -149,9 +147,9 @@ def process():
     result = subprocess.run(
         [
             "./build/main", 
-            "static/input.jpg", 
+            "static/input.png", 
             str(brightness), 
-            str(mask_iters), 
+            str(gamma_degree), 
             out_file, 
             srv_file
         ],
@@ -168,7 +166,7 @@ def process():
 
 if __name__ == '__main__':
     os.makedirs("static", exist_ok=True)
-    if not os.path.exists("static/input.jpg"):
+    if not os.path.exists("static/input.png"):
         from PIL import Image
-        Image.new('L', (80, 80), color=128).save("static/input.jpg")
+        Image.new('L', (80, 80), color=128).save("static/input.png")
     app.run(port=5000, debug=False)
