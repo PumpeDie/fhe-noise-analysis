@@ -27,35 +27,40 @@
 
 #align(center)[
   #grid(
-    columns: 3,
-    gutter: 2em,
-    align(center, stack(spacing: 8pt,
-      text(weight: "bold", size: 0.9em)[Texte chiffré frais],
-      rect(width: 8em, height: 1.5em, stroke: 1pt, radius: 2pt, inset: 0pt)[
-        #grid(columns: (2.5em, 1fr, 1.2em), rows: (100%),
+    columns: (8em, 2em, 8em, 2em, 8em),
+    align: center + horizon,
+    
+    stack(spacing: 10pt,
+      text(weight: "bold", size: 0.9em)[Frais],
+      rect(width: 8em, height: 2em, stroke: 1pt, radius: 2pt, inset: 0pt)[
+        #grid(columns: (3em, 1fr, 1.5em), rows: (100%),
           rect(width:100%, height:100%, fill: rgb("#eaf2d6"), stroke:none)[Msg],
-          [],
+          rect(width:100%, height:100%, fill: luma(245), stroke:none)[],
           rect(width:100%, height:100%, fill: red.lighten(50%), stroke:none)[$e$]
         )
       ]
-    )),
-    align(center, stack(spacing: 8pt,
-      text(weight: "bold", size: 0.9em)[Après opérations],
-      rect(width: 8em, height: 1.5em, stroke: 1pt, radius: 2pt, inset: 0pt)[
-        #grid(columns: (2.5em, 1fr, 4em), rows: (100%),
+    ),
+    
+    [$arrow.r$],
+    
+    stack(spacing: 10pt,
+      text(weight: "bold", size: 0.9em)[Après calculs],
+      rect(width: 8em, height: 2em, stroke: 1pt, radius: 2pt, inset: 0pt)[
+        #grid(columns: (3em, 1fr, 4em), rows: (100%),
           rect(width:100%, height:100%, fill: rgb("#eaf2d6"), stroke:none)[Msg],
-          [],
+          rect(width:100%, height:100%, fill: luma(245), stroke:none)[],
           rect(width:100%, height:100%, fill: red.lighten(50%), stroke:none)[$e'$]
         )
       ]
-    )),
-    align(center, stack(spacing: 8pt,
+    ),
+    
+    [$arrow.r$],
+    
+    stack(spacing: 10pt,
       text(weight: "bold", size: 0.9em, fill: red)[Effet Falaise],
-      rect(width: 8em, height: 1.5em, stroke: 2pt+red, radius: 2pt, inset: 0pt)[
-        #grid(columns: (100%), rows: (100%),
-          rect(width:100%, height:100%, fill: red.lighten(30%), stroke:none)[*Corruption*]
-        )
+      rect(width: 8em, height: 2em, stroke: 2pt + red, radius: 2pt, inset: 0pt)[
+        #rect(width:100%, height:100%, fill: red.lighten(30%), stroke:none)[*Corruption*]
       ]
-    ))
+    )
   )
 ]
