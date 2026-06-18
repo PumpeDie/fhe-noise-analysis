@@ -1,52 +1,65 @@
 = Démonstration et Analyse
 
-== La Preuve de Concept (POC)
-- *Scénario :* Traitement d'image délégué (80x80 pixels).
-- *Opération 1 : Addition (Luminosité)*
-  - Ajout d'une constante en clair.
-  - Consommation de bruit quasi nulle.
-- *Opération 2 : Multiplication (Correction Gamma)*
-  - Évaluation polynomiale : $y = x^gamma$.
-  - Multiplications successives (*Chiffré-Chiffré*).
-  - Consommation massive du budget de bruit.
-
-== Analyse des Observations Empiriques
-- *L'Effet Falaise (Cliff Effect) :*
-  - Intégrité parfaite tant que le budget $> 0$.
-  - Corruption instantanée (bruit blanc) dès l'épuisement.
+== Encodage des données : Vectorisation et Batching (SIMD)
+- *Contrainte :* L'opération polynomiale est coûteuse. Chiffrer un pixel par polynôme est inefficace.
+- *Solution (Batching) :* Exploitation du théorème des restes chinois pour encoder plusieurs valeurs dans les coefficients d'un unique polynôme.
+- *Application au POC :* Une image $80 times 80$ ($6400$ pixels) tient dans un seul polynôme de degré $N = 8192$.
 
 #align(center)[
-  #grid(columns: 2, gutter: 2em,
+  #box(stroke: 1pt + luma(200), inset: 15pt, radius: 4pt)[
+    #grid(columns: 5, align: center + horizon, gutter: 1.5em,
+      // Matrice 2D
+      grid(columns: 2, rows: 2, gutter: 2pt,
+        rect(width: 1.5em, height: 1.5em, fill: luma(200)), rect(width: 1.5em, height: 1.5em, fill: luma(150)),
+        rect(width: 1.5em, height: 1.5em, fill: luma(100)), rect(width: 1.5em, height: 1.5em, fill: luma(50))
+      ),
+      text(size: 0.8em)[$arrow.r$ \ Aplatissement],
+      // Vecteur 1D
+      grid(columns: 4, gutter: 2pt,
+        rect(width: 1.2em, height: 1.5em, fill: luma(200)), rect(width: 1.2em, height: 1.5em, fill: luma(150)),
+        rect(width: 1.2em, height: 1.5em, fill: luma(100)), rect(width: 1.2em, height: 1.5em, fill: luma(50))
+      ),
+      text(size: 0.8em)[$arrow.r$ \ Encodage (SEAL)],
+      // Polynôme
+      rect(width: 6em, height: 3em, fill: rgb("#eaf2d6"), radius: 4pt, stroke: 1pt + rgb("#6e8b15"))[
+        Polynôme $m(x)$ \
+        #text(size: 0.6em)[(8192 slots indépendants)]
+      ]
+    )
+  ]
+]
+
+== Analyse : Dégradation du Budget de Bruit
+- Observation empirique de l'Effet Falaise lors de multiplications successives.
+- Paramètres : $N = 8192$, Modulus = 45 bits. Budget initial $approx 135$ bits.
+
+#align(center)[
+  #grid(columns: 5, align: bottom, gutter: 1em,
+    stack(spacing: 5pt, text(size: 0.7em)[135 bits], rect(width: 3em, height: 100pt, fill: rgb("#6e8b15")), text(size: 0.8em)[Frais]),
+    stack(spacing: 5pt, text(size: 0.7em)[102 bits], rect(width: 3em, height: 75pt, fill: rgb("#6e8b15").lighten(20%)), text(size: 0.8em)[Mult 1]),
+    stack(spacing: 5pt, text(size: 0.7em)[60 bits], rect(width: 3em, height: 45pt, fill: rgb("#6e8b15").lighten(40%)), text(size: 0.8em)[Mult 2]),
+    stack(spacing: 5pt, text(size: 0.7em)[15 bits], rect(width: 3em, height: 12pt, fill: orange), text(size: 0.8em)[Mult 3]),
+    stack(spacing: 5pt, text(size: 0.7em, fill: red)[0 bit], rect(width: 3em, height: 2pt, fill: red), text(weight: "bold", size: 0.8em, fill: red)[Corruption])
+  )
+]
+
+== Analyse : Profilage de la Latence (Métriques)
+- Évaluation des performances sur l'opération unique via `std::chrono` (C++).
+- L'asymétrie computationnelle justifie la nécessité d'optimisation matérielle.
+
+#align(center)[
+  #grid(columns: 2, gutter: 4em, align: bottom,
     stack(spacing: 8pt,
-      [Budget de Bruit],
-      rect(fill: luma(240), stroke: 1pt, height: 2em, width: 8em,
-        grid(columns: (1fr, 0.2fr), rect(fill: blue, height: 100%)[], [])
-      )
+      text(size: 0.9em, weight: "bold")[Opérations Linéaires],
+      rect(width: 4em, height: 5pt, fill: blue),
+      text(size: 0.8em)[Addition \ $approx 120$ µs]
     ),
     stack(spacing: 8pt,
-      [Erreur de Déchiffrement],
-      rect(fill: luma(240), stroke: 1pt, height: 2em, width: 8em,
-        align(center + horizon)[$0$]
-      )
+      text(size: 0.9em, weight: "bold")[Opérations Quadratiques],
+      rect(width: 4em, height: 100pt, fill: red),
+      text(size: 0.8em)[Multiplication + Relinéarisation \ $approx 30$ ms]
     )
   )
 ]
 
-== Discussion des Métriques
-- *Expansion des données :* Un pixel (1 octet) devient un polynôme de plusieurs mégaoctets. Goulot d'étranglement majeur.
-- *Asymétrie de latence :*
-
-#align(center)[
-  #grid(columns: 2, gutter: 3em,
-    box(stroke: 1pt, inset: 10pt, radius: 2pt)[
-      *Addition* \
-      $approx 10$ #text(size: 0.8em)[$\mu s$]
-    ],
-    box(stroke: 1pt + red, inset: 10pt, radius: 2pt)[
-      *Multiplication + Rélîn.* \
-      $approx 50-100$ #text(size: 0.8em)[ms]
-    ]
-  )
-]
-
-- *Validation :* Démontre empiriquement les limites de performance du *Levelled-FHE*.
+- *Conclusion du POC :* La latence de traitement est acceptable pour des circuits fixes (Levelled-FHE), mais l'expansion mémoire ($times 10^4$) limite l'usage réseau.
