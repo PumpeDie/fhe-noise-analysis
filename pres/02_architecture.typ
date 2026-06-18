@@ -1,24 +1,49 @@
+#import "@preview/touying:0.7.4": *
+
 = Architecture et Implémentation
 
 == Sélection du Schéma (BFV)
 - *Schéma BFV (Brakerski-Fan-Vercauteren) :*
-  - Arithmétique entière exacte.
-  - Idéal pour prouver l'intégrité absolue des données avant corruption.
-- *Impact des opérations :*
-  - Addition : Croissance linéaire du bruit ($e_1 + e_2$). Coût en budget négligeable.
-  - Multiplication : Croissance exponentielle ($e_1 dot e_2$). Coût massif.
-- *Profondeur multiplicative :* Détermine le nombre maximal de multiplications séquentielles supportées.
+  - Arithmétique entière exacte (idéal pour intégrité).
+  - Basé sur la difficulté du problème RLWE (*Ring Learning With Errors*).
+- *Gestion de la croissance du bruit :*
+  - Addition : Croissance linéaire ($e_1 + e_2$).
+  - Multiplication : Croissance quasi-exponentielle (nécessite une procédure de relinéarisation).
+- *Profondeur multiplicative :* Nombre de multiplications autorisées avant que le bruit $e$ ne corrompe les bits de poids fort du message.
+
+#align(center)[
+  #grid(columns: 2, gutter: 2em,
+    align(center, box(stroke: 1pt, inset: 8pt, radius: 2pt)[
+      #grid(columns: 2, align: horizon, gutter: 1em,
+        [Addition], [Croissance #text(fill: blue)[Linéaire]]
+      )
+    ]),
+    align(center, box(stroke: 1pt, inset: 8pt, radius: 2pt)[
+      #grid(columns: 2, align: horizon, gutter: 1em,
+        [Multiplication], [Croissance #text(fill: red)[Exponentielle]]
+      )
+    ])
+  )
+]
 
 == Ingénierie des Paramètres Cryptographiques
-- Utilisation de la bibliothèque *Microsoft SEAL* (C++).
-- *Degré du polynôme ($N = 8192$) :* Détermine le niveau de sécurité et le budget de bruit initial.
-- *Plain Modulus (Espace des clairs) :* - Ajusté spécifiquement à 45 bits.
-  - *Objectif :* Éviter le dépassement d'entier (*overflow* mathématique) lors des puissances, pour isoler strictement l'erreur liée au bruit cryptographique.
-- *Relinéarisation :* Réduction de la taille du texte chiffré après chaque multiplication via des clés d'évaluation publiques.
+- *Degré du polynôme ($N = 8192$) :* Définit l'espace des coefficients. Assure un niveau de sécurité NIST standard ($> 128$ bits).
+- *Plain Modulus ($t = 2^45$) :*
+  - Choisi pour éviter les dépassements (*overflows*) lors de calculs polynomiaux complexes.
+  - Permet d'isoler l'erreur cryptographique de l'erreur de calcul arithmétique.
+- *Relinéarisation :* Réduction de la taille du texte chiffré (qui double après une multiplication) via des *Evaluation Keys* publiques.
 
 == Architecture Logicielle
-- *Modèle asymétrique séparé :*
-  - *Client :* Possède les clés privées, chiffre les données, déchiffre les résultats.
-  - *Serveur :* Possède uniquement les clés publiques/évaluation, exécute le circuit arithmétique.
-- *Pile technologique :* - Moteur cryptographique C++ (Performances).
-  - Orchestration Python/Flask (Simulation de l'infrastructure réseau).
+- *Séparation des privilèges :*
+  - *Client :* Déteneur de la clé secrète. Unique entité capable de déchiffrer.
+  - *Serveur :* Exécute les opérateurs homomorphes via des clés publiques.
+
+#align(center)[
+  #grid(columns: 3, gutter: 1em, align: horizon,
+    box(stroke: 1pt, inset: 10pt, radius: 2pt)[Client \ (Privé)],
+    $arrow.r.double.long.bar$,
+    box(stroke: 1pt, inset: 10pt, radius: 2pt)[Serveur \ (Public/Eval)]
+  )
+]
+
+- *Optimisation :* Moteur C++ (Microsoft SEAL) pour la manipulation des grands entiers, encapsulé par une API Python/Flask.
