@@ -33,5 +33,7 @@
   - *Serveur :* Évaluation homomorphe (produits scalaires) contre une base de données globale (POI).
 
 == Perspectives Industrielles : Évolutions
-- *Accélération matérielle :* Développement de FPGA ou ASIC spécialisés pour optimiser les opérations NTT (*Number Theoretic Transform*).
+- *Accélération matérielle (NTT) :*
+  - La multiplication polynomiale est le goulot d'étranglement majeur. La NTT (*Number Theoretic Transform*) réduit sa complexité de $O(N^2)$ à $O(N log N)$.
+  - Les processeurs (CPU) sont limités par la bande passante mémoire. Les architectures dédiées (FPGA/ASIC) permettent une parallélisation massive pour viabiliser le FHE en temps réel.
 - *Schémas alternatifs :* Adoption du schéma CKKS (Arithmétique approximative) pour l'IA générative et le *Machine Learning* avancé, environnements nécessitant la manipulation de nombres à virgule flottante.

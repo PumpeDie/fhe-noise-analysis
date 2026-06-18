@@ -6,7 +6,7 @@
   config-info(
     title: [Chiffrement homomorphe basé sur LWE],
     subtitle: [Projet de Cryptographie (8INF874) --- Implémentation logicielle et analyse d'impact de la gestion de l'erreur],
-    author: [Justin Bossard \ Samuel Plet],
+    author: [Groupe 6 \ Justin Bossard --- #text(fill: luma(100))[BOSJ08070300] \ Samuel Plet --- #text(fill: luma(100))[PLES07110100]],
     date: datetime.today(),
     institution: [Université du Québec à Chicoutimi (UQAC)],
     logo: image("uqac.svg", height: 1cm),
