@@ -95,6 +95,10 @@ HTML_TEMPLATE = """
             <div class="card">
                 <h3>État du texte chiffré</h3>
                 <p>Budget de bruit restant : <strong id="budget">-</strong> bits</p>
+                <div class="metric">
+                    Temps d'addition : <strong id="time_add">-</strong> µs<br>
+                    Temps de multiplication : <strong id="time_mult">-</strong> ms
+                </div>
             </div>
         </div>
         
@@ -119,6 +123,8 @@ HTML_TEMPLATE = """
                 
                 document.getElementById('cipher_size').innerText = data.taille_octets;
                 document.getElementById('budget').innerText = data.budget_final;
+                document.getElementById('time_add').innerText = data.temps_add_us || 0;
+                document.getElementById('time_mult').innerText = data.temps_mult_ms || 0;
                 
                 document.getElementById('hash_src').innerText = data.hash_src;
                 document.getElementById('hash_final').innerText = data.hash_final;

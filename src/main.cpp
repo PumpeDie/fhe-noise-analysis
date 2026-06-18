@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <sstream>
 #include <algorithm>
+#include <chrono>
 #include <seal/seal.h>
 #include "stb_image.h"
 #include "stb_image_write.h"
@@ -70,20 +71,33 @@ int main(int argc, char* argv[]) {
     Ciphertext encrypted_result = encrypted_image;
     uint64_t scale_factor = static_cast<uint64_t>(std::pow(255.0, gamma_degree - 1));
 
+    long long time_mult_ms = 0;
+    auto start_mult = std::chrono::high_resolution_clock::now();
+    
     for (int it = 1; it < gamma_degree; ++it) {
         evaluator.multiply_inplace(encrypted_result, encrypted_image);
         evaluator.relinearize_inplace(encrypted_result, relin_keys);
     }
+    
+    auto end_mult = std::chrono::high_resolution_clock::now();
+    if (gamma_degree > 1) {
+        time_mult_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end_mult - start_mult).count();
+    }
 
     // --- SERVEUR : 2. Addition Linéaire (Luminosité avec mise à l'échelle) ---
+    long long time_add_us = 0;
     if (brightness != 0) {
         int64_t scaled_brightness = static_cast<int64_t>(brightness) * scale_factor;
         std::vector<uint64_t> vec_B(poly_modulus_degree, std::abs(scaled_brightness));
         Plaintext plain_B;
         batch_encoder.encode(vec_B, plain_B);
         
+        auto start_add = std::chrono::high_resolution_clock::now();
         if (scaled_brightness > 0) evaluator.add_plain_inplace(encrypted_result, plain_B);
         else evaluator.sub_plain_inplace(encrypted_result, plain_B);
+        auto end_add = std::chrono::high_resolution_clock::now();
+        
+        time_add_us = std::chrono::duration_cast<std::chrono::microseconds>(end_add - start_add).count();
     }
 
     // Extraction de la vue serveur
@@ -127,7 +141,9 @@ int main(int argc, char* argv[]) {
               << "  \"ecart_moyen\": " << std::fixed << std::setprecision(4) << (total_diff / pixel_count) << ",\n"
               << "  \"hash_src\": \"" << src_hash << "\",\n"
               << "  \"hash_final\": \"" << compute_hash(final_pixels) << "\",\n"
-              << "  \"taille_octets\": " << encrypted_result.save_size() << "\n"
+              << "  \"taille_octets\": " << encrypted_result.save_size() << ",\n"
+              << "  \"temps_mult_ms\": " << time_mult_ms << ",\n"
+              << "  \"temps_add_us\": " << time_add_us << "\n"
               << "}\n";
 
     return 0;
