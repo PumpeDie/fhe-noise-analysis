@@ -21,7 +21,7 @@
       ),
       text(size: 0.8em)[$arrow.r$ \ Encodage (SEAL)],
       // Polynôme
-      rect(width: 6em, height: 3em, fill: rgb("#eaf2d6"), radius: 4pt, stroke: 1pt + rgb("#6e8b15"))[
+      rect(width: 8em, height: 3em, fill: rgb("#eaf2d6"), radius: 4pt, stroke: 1pt + rgb("#6e8b15"))[
         Polynôme $m(x)$ \
         #text(size: 0.6em)[(8192 slots indépendants)]
       ]
@@ -51,13 +51,13 @@
   #grid(columns: 2, gutter: 4em, align: bottom,
     stack(spacing: 8pt,
       text(size: 0.9em, weight: "bold")[Opérations Linéaires],
-      rect(width: 4em, height: 5pt, fill: blue),
-      text(size: 0.8em)[Addition \ $approx 120$ µs]
+      rect(width: 4em, height: 1pt, fill: blue),
+      text(size: 0.8em)[Addition \ $approx 130$ µs]
     ),
     stack(spacing: 8pt,
       text(size: 0.9em, weight: "bold")[Opérations Quadratiques],
       rect(width: 4em, height: 100pt, fill: red),
-      text(size: 0.8em)[Multiplication + Relinéarisation \ $approx 30$ ms]
+      text(size: 0.8em)[Multiplication + Relinéarisation \ $approx 20$ ms]
     )
   )
 ]

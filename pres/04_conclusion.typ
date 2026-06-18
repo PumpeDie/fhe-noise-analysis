@@ -21,6 +21,17 @@
 
 - *Exclusion du POC :* Coût computationnel prohibitif, masquant l'observation de la croissance du bruit (objectif initial).
 
-== Perspectives Industrielles
+== Perspectives Industrielles : Cas d'usage (Apple)
+- Application du schéma BFV à la recherche visuelle sur appareil sans compromettre la confidentialité.
+
+#align(center)[
+  #image("figure2.png", height: 50%)
+]
+
+- *Validation de l'architecture asymétrique :*
+  - *Client :* Extraction du vecteur d'embedding, quantification et chiffrement BFV.
+  - *Serveur :* Évaluation homomorphe (produits scalaires) contre une base de données globale (POI).
+
+== Perspectives Industrielles : Évolutions
 - *Accélération matérielle :* Développement de FPGA ou ASIC spécialisés pour optimiser les opérations NTT (*Number Theoretic Transform*).
-- *Schémas alternatifs :* Adoption du schéma CKKS (Arithmétique approximative) pour l'IA et le *Machine Learning*, environnements naturellement tolérants au bruit.
+- *Schémas alternatifs :* Adoption du schéma CKKS (Arithmétique approximative) pour l'IA générative et le *Machine Learning* avancé, environnements nécessitant la manipulation de nombres à virgule flottante.
