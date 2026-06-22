@@ -62,4 +62,4 @@
   )
 ]
 
-- *Conclusion du POC :* La latence de traitement est acceptable pour des circuits fixes (Levelled-FHE), mais l'expansion mémoire ($times 10^4$) limite l'usage réseau.
+- *Conclusion du POC :* La latence de traitement est acceptable pour des circuits fixes (Levelled-FHE). L'expansion mémoire nominale ($frac("Chiffré" approx 100 " Ko", "Clair" 8 " octets") approx 10^4$) est partiellement amortie par l'encodage SIMD, mais reste le principal goulot d'étranglement réseau.
