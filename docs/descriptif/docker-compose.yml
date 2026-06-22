@@ -1,0 +1,7 @@
+services:
+  typst:
+    image: ghcr.io/typst/typst:0.14.2
+    volumes:
+      - .:/data
+    working_dir: /data
+    command: compile projet.typ
