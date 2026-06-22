@@ -35,10 +35,9 @@
 
 #align(center)[
   #grid(columns: 5, align: bottom, gutter: 1em,
-    stack(spacing: 5pt, text(size: 0.7em)[135 bits], rect(width: 3em, height: 100pt, fill: rgb("#6e8b15")), text(size: 0.8em)[Frais]),
-    stack(spacing: 5pt, text(size: 0.7em)[102 bits], rect(width: 3em, height: 75pt, fill: rgb("#6e8b15").lighten(20%)), text(size: 0.8em)[Mult 1]),
-    stack(spacing: 5pt, text(size: 0.7em)[60 bits], rect(width: 3em, height: 45pt, fill: rgb("#6e8b15").lighten(40%)), text(size: 0.8em)[Mult 2]),
-    stack(spacing: 5pt, text(size: 0.7em)[15 bits], rect(width: 3em, height: 12pt, fill: orange), text(size: 0.8em)[Mult 3]),
+    stack(spacing: 5pt, text(size: 0.7em)[121 bits], rect(width: 3em, height: 75pt, fill: rgb("#6e8b15").lighten(20%)), text(size: 0.8em)[Frais]),
+    stack(spacing: 5pt, text(size: 0.7em)[64 bits], rect(width: 3em, height: 45pt, fill: rgb("#6e8b15").lighten(40%)), text(size: 0.8em)[Mult 1]),
+    stack(spacing: 5pt, text(size: 0.7em)[6 bits], rect(width: 3em, height: 12pt, fill: orange), text(size: 0.8em)[Mult 2]),
     stack(spacing: 5pt, text(size: 0.7em, fill: red)[0 bit], rect(width: 3em, height: 2pt, fill: red), text(weight: "bold", size: 0.8em, fill: red)[Corruption])
   )
 ]
