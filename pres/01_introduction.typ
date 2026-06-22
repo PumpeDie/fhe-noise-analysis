@@ -13,7 +13,7 @@
 - *Catégories :* PHE (Partiel, ex: Paillier) $->$ SWHE (Limité) $->$ FHE (Profondeur infinie).
 
 == Base Théorique : Ring-LWE (Learning With Errors sur Anneaux)
-- Problème calculatoire opérant sur des polynômes dans des anneaux quotients $bb(Z)_q[X]/(X^n + 1)$.
+- Problème calculatoire opérant sur des polynômes dans des anneaux quotients $(bb(Z)_(q)[X])/(X^n + 1)$.
 - *Génération des clés :*
   #align(center)[$ b(x) = -a(x) dot s(x) + e(x) quad (mod q) $]
   - $s(x)$ : Polynôme secret (coefficients petits).
