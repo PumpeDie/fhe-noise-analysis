@@ -64,3 +64,7 @@
     )
   )
 ]
+
+== Problématique et Objectifs du Projet
+- *Question centrale :* Dans quelle mesure l'accumulation *empirique* du bruit influence-t-elle les performances globales et la viabilité opérationnelle d'un système FHE ?
+- *Objectif de l'Étude :* Confronter les approximations théoriques aux mesures physiques et temporelles obtenues via la POC, en mesurant l'évolution réelle du bruit lors d'opérations successives.
