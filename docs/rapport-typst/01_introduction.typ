@@ -1,4 +1,5 @@
 = Introduction
+Notre projet est disponible sur GitHub : https://github.com/PumpeDie/fhe-noise-analysis.
 
 == Contexte technologique
 L'externalisation des calculs vers l'informatique en nuage (Cloud) pose un défi majeur de sécurité. Actuellement, les données sont efficacement protégées au repos et en transit par les méthodes de chiffrement standards. Cependant, elles doivent être déchiffrées pour être manipulées par un processeur. Cette étape expose les informations sensibles sur les serveurs distants. Le chiffrement homomorphe (FHE) résout ce problème en permettant d'exécuter des opérations directement sur des données chiffrées, assurant une confidentialité totale en cours d'utilisation.
